@@ -1,0 +1,20 @@
+[Definition]
+# Check if the DOCKER-USER rule exists (assumes ipset rule is already added there)
+actioncheck = iptables -C DOCKER-USER -m set --match-set f2b-docker src -j DROP
+
+# Add IP to ipset
+actionban = ipset add f2b-docker <ip> -exist
+
+# Remove IP from ipset
+actionunban = ipset del f2b-docker <ip>
+
+# Initialize ipset and iptables rule (optional, for 'actionstart')
+actionstart = \
+    ipset create f2b-docker hash:ip timeout 0 -exist && \
+    iptables -I DOCKER-USER -m set --match-set f2b-docker src -j DROP || true
+
+# Optional: Cleanup
+actionstop = iptables -D DOCKER-USER -m set --match-set f2b-docker src -j DROP || true
+
+[Init]
+# You may define variables or options here

@@ -1,0 +1,53 @@
+---
+- name: Install python dependencies
+  ansible.builtin.pip:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - pyasynchat
+    - pyasyncore
+    - dnspython
+    - python-systemd
+  tags: install
+
+- name: RHEL-based distro fail2ban install
+  become: true
+  when: ansible_facts['os_family'] == "RedHat"
+  tags: install
+  block:
+    - name: Ensure epel-release is installed
+      ansible.builtin.dnf:
+        name: epel-release
+        state: present
+        update_cache: true
+
+    - name: Install needed packages
+      ansible.builtin.dnf:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - python3-setuptools
+        - fail2ban
+
+    - name: Check if fail2ban_t is already permissive
+      ansible.builtin.shell: semanage permissive -l | grep -w fail2ban_t
+      register: fail2ban_setup_permissive_check
+      ignore_errors: true
+      changed_when: false
+
+    - name: Add fail2ban_t to permissive types
+      ansible.builtin.command: semanage permissive -a fail2ban_t
+      when: fail2ban_setup_permissive_check.rc != 0
+
+- name: Debian-based distro fail2ban install
+  become: true
+  when: ansible_facts['os_family'] == "Debian"
+  tags: install
+  block:
+    - name: Install needed packages
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - fail2ban
+...

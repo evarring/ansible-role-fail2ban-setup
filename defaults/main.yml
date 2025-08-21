@@ -1,0 +1,30 @@
+# SPDX-License-Identifier: MIT-0
+---
+# defaults file for fail2ban_setup
+
+fail2ban_setup_config_folder: /etc/fail2ban
+
+fail2ban_setup_custom_actions:
+  - src: traefik-docker.conf.j2
+    dest: traefik-docker.conf
+  - src: traefik-docker-ipset.conf.j2
+    dest: traefik-docker-ipset.conf
+
+fail2ban_setup_custom_filters:
+  - src: traefik-404.conf.j2
+    dest: traefik-404.conf
+  - src: vaultwarden.conf.j2
+    dest: vaultwarden.conf
+
+# This is what you probably want to customize the most, depending on what you are running on your host
+fail2ban_setup_custom_jails:
+  - src: jail_traefik.conf.j2
+    dest: traefik.conf
+  - src: jail_vaultwarden.conf.j2
+    dest: vaultwarden.conf
+  - src: jail_sshd.conf.j2
+    dest: sshd.conf
+
+# Full path to the needed log files
+fail2ban_setup_vaultwarden_access_log_path: []
+fail2ban_setup_traefik_access_log_path: []

@@ -1,0 +1,43 @@
+# SPDX-License-Identifier: MIT-0
+---
+# tasks file for fail2ban_setup
+
+- name: Dependency installation tasks
+  ansible.builtin.include_tasks: install.yml
+  tags: install
+
+- name: Configuration block
+  tags: install, config
+  become: true
+  notify: Start or restart fail2ban
+  block:
+    - name: Sort out actionss
+      ansible.builtin.template:
+        src: "{{ item.src }}"
+        dest: "{{ fail2ban_setup_config_folder }}/action.d/{{ item.dest }}"
+        mode: '0644'
+      loop: "{{ fail2ban_setup_custom_actions }}"
+
+    - name: Sort out filters
+      ansible.builtin.template:
+        src: "{{ item.src }}"
+        dest: "{{ fail2ban_setup_config_folder }}/filter.d/{{ item.dest }}"
+        mode: '0644'
+      loop: "{{ fail2ban_setup_custom_filters }}"
+
+    - name: Sort out custom jails
+      ansible.builtin.template:
+        src: "{{ item.src }}"
+        dest: "{{ fail2ban_setup_config_folder }}/jail.d/{{ item.dest }}"
+        mode: '0644'
+      loop: "{{ fail2ban_setup_custom_jails }}"
+
+    - name: Deploy fail2ban jail.local
+      ansible.builtin.template:
+        src: "{{ item }}"
+        dest: "{{ fail2ban_setup_config_folder }}/jail.d/jail.local"
+        mode: '0644'
+      with_first_found:
+        - "jail.local_{{ inventory_hostname }}.j2"
+        - "jail.local.j2"
+...

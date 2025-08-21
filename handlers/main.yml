@@ -1,0 +1,10 @@
+# SPDX-License-Identifier: MIT-0
+---
+# handlers file for fail2ban_setup
+
+- name: Start or restart fail2ban
+  ansible.builtin.systemd:
+    name: fail2ban.service
+    enabled: true
+    state: restarted
+  become: true

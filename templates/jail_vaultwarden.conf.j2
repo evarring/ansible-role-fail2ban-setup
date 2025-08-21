@@ -1,0 +1,9 @@
+[vaultwarden]
+enabled = true
+port = http,https
+filter = vaultwarden
+logpath = {{ fail2ban_setup_vaultwarden_access_log_path }}
+maxretry = 3
+bantime = 14400
+findtime = 14400
+action = traefik-docker-ipset

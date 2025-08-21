@@ -1,0 +1,21 @@
+[traefik-404]
+enabled = true
+filter = traefik-404
+logpath = {{ fail2ban_setup_traefik_access_log_path }}
+port = http,https
+maxretry = 5
+findtime = 300
+bantime = 86400
+backend = auto
+action = traefik-docker-ipset
+
+[traefik-auth]
+enabled = true
+filter = traefik-auth
+logpath = {{ fail2ban_setup_traefik_access_log_path }}
+port = http,https
+maxretry = 6
+findtime = 60
+bantime = 600
+backend = auto
+action = traefik-docker-ipset

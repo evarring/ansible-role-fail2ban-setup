@@ -15,6 +15,8 @@ fail2ban_setup_custom_filters:
     dest: traefik-404.conf
   - src: vaultwarden.conf.j2
     dest: vaultwarden.conf
+  - src: hass.conf.j2
+    dest: hass.conf
 
 # This is what you probably want to customize the most, depending on what you are running on your host
 fail2ban_setup_custom_jails:
@@ -24,6 +26,8 @@ fail2ban_setup_custom_jails:
     dest: vaultwarden.conf
   - src: jail_sshd.conf.j2
     dest: sshd.conf
+  - src: jail_hass.conf.j2
+    dest: jail_hass.conf
 
 # Full path to the needed log files
 fail2ban_setup_vaultwarden_access_log_path: []
